@@ -4,31 +4,55 @@ from tkinter import ttk
 
 class Application:
     def __init__(self, master=None):
+        self.fontePadrao = ("Arial", "10")
+        self.primeiroContainer = Frame(master)
+        self.primeiroContainer.pack()
 
-        self.quartoContainer = Label(bg="#274360")
-        self.quartoContainer["padx"] = 348
-        self.quartoContainer["pady"] = 20
-        self.quartoContainer.grid()
+        self.segundoContainer = Frame(master)
+        self.segundoContainer["padx"] = 20
+        self.segundoContainer.pack()
 
-        self.quintoContainer = self.ComboBox()
+        self.terceiroContainer = Frame(master)
+        self.terceiroContainer["padx"] = 20
+        self.terceiroContainer.pack()
 
-    def ComboBox(self):
+        self.quartoContainer = Frame(master)
+        self.quartoContainer["padx"] = 20
+        self.quartoContainer.pack()
 
-        # labelTop = tk.Label(root, text = "Tipo de Automação")
-        # labelTop.grid(column= 0, row=0, padx=50, pady=10)
+        self.quintoContainer = Frame(master)
+        self.quintoContainer["padx"] = 20
+        self.quintoContainer.pack()
 
-        comboExample = ttk.Combobox(root, values= [
-                                            "",
-                                            "Auditoria Geap", 
-                                            "Soma Consenso"],
-                                            width=50,)
-        
-        
-        print(dict(comboExample))
-        comboExample.grid(column= 0, row=5 )
-        comboExample.current(0)
+        self.sextoContainer = Frame(master)
+        self.sextoContainer["padx"] = 20
+        self.sextoContainer.pack()
 
-        print(comboExample.current(), comboExample.get())
+   
+
+        self.rodape = Label(self.primeiroContainer, bg="#274360")
+        self.rodape["padx"] = 348
+        self.rodape["pady"] = 18
+        self.rodape.pack()
+
+        foto = tk.PhotoImage(file="amhplogo.png")
+        self.img = tk.Label(self.segundoContainer,image=foto)
+        self.img.foto = foto
+        self.img.pack()
+
+        self.nomeLabel = Label(self.quartoContainer, text="Selecione a automação",font=self.fontePadrao)
+        self.nomeLabel["background"] = 'white'
+        self.nomeLabel.pack(side=LEFT)
+
+
+        self.comboBox = ttk.Combobox(self.quintoContainer, 
+                                     values= ["Auditoria Geap","Anexar Honorario Geap","Teste"],
+                                     width=50)
+        self.comboBox["background"] = 'white'
+        self.comboBox.pack(side=LEFT)
+
+
+
 
 root = tk.Tk()
 Application(root)
