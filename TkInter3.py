@@ -23,6 +23,7 @@ class Application:
                                             "Soma Consenso"],
                                             width=50,)
         
+        
         print(dict(comboExample))
         comboExample.grid(column= 0, row=5 )
         comboExample.current(0)
