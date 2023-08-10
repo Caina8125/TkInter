@@ -56,6 +56,7 @@ class Application:
     def verificaSenha(self):
         usuario = self.nome.get()
         senha = self.senha.get()
+        
         if usuario == "caina" and senha == "caina":
             self.mensagem["text"] = "Autenticado"
         else:

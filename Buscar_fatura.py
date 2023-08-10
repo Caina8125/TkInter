@@ -4,13 +4,13 @@ import time
 from abc import ABC
 from tkinter import filedialog
 import tkinter.messagebox
-from selenium import webdriver
 from openpyxl import Workbook, load_workbook
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
+from seleniumwire import webdriver
 
 
 class PageElement(ABC):
@@ -44,7 +44,7 @@ class caminho(PageElement):
         except:
             print('Não tem alerta')
 
-        webdriver.get("https://www2.geap.com.br/PRESTADOR/tiss-baixa.asp")
+        driver.get("https://www2.geap.com.br/PRESTADOR/tiss-baixa.asp")
         time.sleep(3)
 
 class capturar_protocolo(PageElement):
@@ -69,12 +69,12 @@ class capturar_protocolo(PageElement):
                 continue
             
             print(count,')','Buscanco a fatura do Protocolo =>', protocolo_plan )
-            self.webdriver.find_element(*self.inserir_protocolo).send_keys(protocolo_plan)
-            self.webdriver.find_element(*self.baixar).click()
+            driver.find_element(*self.inserir_protocolo).send_keys(protocolo_plan)
+            driver.find_element(*self.baixar).click()
             time.sleep(0.7)
 
             #Bloco de código que insere o número da fatura na planilha
-            fatura_site = webdriver.find_element(By.XPATH, '//*[@id="main"]/div/div/div/table/tbody/tr[2]/td[3]').text
+            fatura_site = driver.find_element(By.XPATH, '//*[@id="main"]/div/div/div/table/tbody/tr[2]/td[3]').text
             n_fatura = [fatura_site]
             df = pd.DataFrame(n_fatura)
             book = load_workbook(planilha)
@@ -86,7 +86,7 @@ class capturar_protocolo(PageElement):
 
             capturar_protocolo(webdriver,url).confere()
 
-            webdriver.get("https://www2.geap.com.br/PRESTADOR/tiss-baixa.asp")
+            driver.get("https://www2.geap.com.br/PRESTADOR/tiss-baixa.asp")
 
     def confere(self):
 
@@ -103,8 +103,8 @@ class capturar_protocolo(PageElement):
         except:
             protocolo_plan = str(dados["Protocolo"])
 
-        fatura_site = webdriver.find_element(By.XPATH, '//*[@id="main"]/div/div/div/table/tbody/tr[2]/td[3]').text
-        protocolo_site  = webdriver.find_element(By.XPATH,'//*[@id="main"]/div/div/div/table/tbody/tr[2]/td[1]').text
+        fatura_site = driver.find_element(By.XPATH, '//*[@id="main"]/div/div/div/table/tbody/tr[2]/td[3]').text
+        protocolo_site  = driver.find_element(By.XPATH,'//*[@id="main"]/div/div/div/table/tbody/tr[2]/td[1]').text
 
         if ((protocolo_plan == protocolo_site) & (fatura_site == fatura_plan)):
             confere = ["Fatura encontrada"]
@@ -127,40 +127,40 @@ class capturar_protocolo(PageElement):
 
 #-------------------------------------------------------------------------------------------------------------------------
 
+def iniciar():
+    url = 'https://www2.geap.com.br/auth/prestador.asp'
+    # planilha = filedialog.askopenfilename()
 
-login_usuario = "lucas.timoteo"
-senha_usuario = "Caina9018"
+    options = {
+        'proxy' : {
+            'http': 'http://lucas.paz:Gsw2022&@10.0.0.230:3128',
+            'https': 'http://lucas.paz:Gsw2022&@10.0.0.230:3128'
+        }
+    }
 
-planilha = filedialog.askopenfilename()
+    driver = webdriver.Chrome(seleniumwire_options= options)
 
-url = 'https://www2.geap.com.br/auth/prestador.asp'
+    driver.maximize_window()
 
+    login_page = Login(driver , url)
+    
+    login_page.open()
+   
+    login_page.exe_login(
+        prestador = "23003723",
+        cpf = '66661692120',
+        senha = "amhpdf0073"
+    )
 
-webdriver = webdriver.Chrome()
-
-login_page = Login(webdriver, url)
-login_page.open()
-webdriver.maximize_window()
-time.sleep(4)
-pyautogui.write(login_usuario)
-pyautogui.press("TAB")
-time.sleep(1)
-pyautogui.write(senha_usuario)
-pyautogui.press("enter")
-time.sleep(4)
-
-login_page.exe_login(
-    prestador = "23003723",
-    cpf = '66661692120',
-    senha = "amhpdf0073"
-)
-
-caminho(webdriver,url).exe_caminho()
-try:
+    caminho(webdriver, url).exe_caminho()
+    # try:
     capturar_protocolo(webdriver, url).exe_capturar()
 
     tkinter.messagebox.showinfo( 'Automação GEAP Financeiro' , 'Busca de Faturas na GEAP Concluído 😎✌' )
 
-except:
-    tkinter.messagebox.showerror( 'Erro Automação' , 'Ocorreu um erro enquanto o Robô trabalhava, provavelmente o portal da GEAP caiu 😢' )
-    
+    # except:
+    #     tkinter.messagebox.showerror( 'Erro Automação' , 'Ocorreu um erro enquanto o Robô trabalhava, provavelmente o portal da GEAP caiu 😢' )
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
